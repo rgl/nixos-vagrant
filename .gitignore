@@ -1,0 +1,8 @@
+.vagrant/
+packer_cache/
+tmp/
+*.box
+*.box.json
+*.log
+output*
+secrets*

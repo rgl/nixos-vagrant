@@ -82,10 +82,10 @@ source "qemu" "nixos-amd64" {
     ["-device", "virtio-scsi-pci,id=scsi0"],
     ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
   ]
-  ssh_username     = "root"
+  ssh_username     = "vagrant"
   ssh_password     = "vagrant"
   ssh_timeout      = "60m"
-  shutdown_command = "poweroff"
+  shutdown_command = "sudo poweroff"
 }
 
 source "hyperv-iso" "nixos-amd64" {
@@ -108,10 +108,10 @@ source "hyperv-iso" "nixos-amd64" {
   switch_name       = var.hyperv_switch_name
   temp_path         = "tmp"
   vlan_id           = var.hyperv_vlan_id
-  ssh_username      = "root"
+  ssh_username      = "vagrant"
   ssh_password      = "vagrant"
   ssh_timeout       = "60m"
-  shutdown_command  = "poweroff"
+  shutdown_command  = "sudo poweroff"
 }
 
 build {

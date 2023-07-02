@@ -26,4 +26,5 @@ nixos-generate-config --root /mnt
 mv /mnt/etc/nixos/configuration.nix{,.orig}
 install /provision/*.nix /mnt/etc/nixos/
 nixos-install
+echo 'vagrant:vagrant' | nixos-enter -- chpasswd
 reboot

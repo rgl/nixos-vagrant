@@ -11,10 +11,10 @@
   # set the time zone.
   time.timeZone = "Europe/Lisbon";
 
-  # set the kayboard layout.
+  # set the keyboard layout.
   console.keyMap = "pt-latin9";
 
-  # configure the OpenSSH server.
+  # install the OpenSSH service.
   services.openssh = {
     enable = true;
     settings = {

@@ -24,6 +24,6 @@ lsblk $target_device
 # install.
 nixos-generate-config --root /mnt
 mv /mnt/etc/nixos/configuration.nix{,.orig}
-install /provision/configuration.nix /mnt/etc/nixos/configuration.nix
+install /provision/*.nix /mnt/etc/nixos/
 nixos-install
 reboot

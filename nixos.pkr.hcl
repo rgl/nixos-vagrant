@@ -1,5 +1,10 @@
 packer {
   required_plugins {
+    # see https://github.com/hashicorp/packer-plugin-qemu
+    qemu = {
+      version = ">= 1.0.9"
+      source  = "github.com/hashicorp/qemu"
+    }
     # see https://github.com/hashicorp/packer-plugin-hyperv
     hyperv = {
       version = ">= 1.1.1"
@@ -20,7 +25,7 @@ variable "iso_url" {
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:539d9ee4a77f7285f020360d4f066e6130ca6681768b4d88179914c6d228b650"
+  default = "none"
 }
 
 variable "hyperv_switch_name" {
@@ -43,10 +48,44 @@ locals {
     "sudo -i<enter><wait>",
     "install -d /provision<enter><wait>",
     "mount -o ro /dev/disk/by-label/provision /provision<enter><wait>",
-    "bash /provision/install.sh<enter><wait1m>",
+    "bash /provision/install.sh<enter><wait2m>",
     "vagrant<enter><wait>",
     "vagrant<enter><wait>",
   ]
+}
+
+source "qemu" "nixos-amd64" {
+  accelerator = "kvm"
+  cd_label    = "provision"
+  cd_files = [
+    "install.sh",
+    "tmp/qemu/configuration.nix",
+    "qemu-hardware-configuration.nix",
+  ]
+  machine_type   = "q35"
+  efi_boot       = true
+  boot_command   = local.boot_command
+  boot_wait      = "5s"
+  disk_discard   = "unmap"
+  disk_interface = "virtio-scsi"
+  disk_size      = var.disk_size
+  format         = "qcow2"
+  headless       = true
+  net_device     = "virtio-net"
+  iso_checksum   = var.iso_checksum
+  iso_url        = var.iso_url
+  cpus           = 2
+  memory         = 2048
+  qemuargs = [
+    ["-cpu", "host"],
+    ["-device", "virtio-vga"],
+    ["-device", "virtio-scsi-pci,id=scsi0"],
+    ["-device", "scsi-hd,bus=scsi0.0,drive=drive0"],
+  ]
+  ssh_username     = "root"
+  ssh_password     = "vagrant"
+  ssh_timeout      = "60m"
+  shutdown_command = "poweroff"
 }
 
 source "hyperv-iso" "nixos-amd64" {
@@ -77,6 +116,7 @@ source "hyperv-iso" "nixos-amd64" {
 
 build {
   sources = [
+    "source.qemu.nixos-amd64",
     "source.hyperv-iso.nixos-amd64",
   ]
 
@@ -92,9 +132,6 @@ build {
   }
 
   post-processor "vagrant" {
-    only = [
-      "hyperv-iso.nixos-amd64",
-    ]
     output               = var.vagrant_box
     vagrantfile_template = "Vagrantfile.template"
   }

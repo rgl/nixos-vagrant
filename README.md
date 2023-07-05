@@ -142,6 +142,7 @@ vagrant destroy -f
 # References
 
 * [NixOS Manual](https://nixos.org/manual/nixos/stable/).
-* [NixOS Options](https://search.nixos.org/options).
+* [NixOS Options](https://nixos.org/manual/nixos/stable/options.html).
+* [NixOS Options Search](https://search.nixos.org/options).
 * [Vagrant NixOS Guest Plugin](https://github.com/hashicorp/vagrant/tree/master/plugins/guests/nixos).
-* [Vagrant NixOS Guest Plugin Template](https://github.com/hashicorp/vagrant/tree/master/templates/guests/nixos)
+* [Vagrant NixOS Guest Plugin Template](https://github.com/hashicorp/vagrant/tree/master/templates/guests/nixos).

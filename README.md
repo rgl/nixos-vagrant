@@ -146,3 +146,4 @@ vagrant destroy -f
 * [NixOS Options Search](https://search.nixos.org/options).
 * [Vagrant NixOS Guest Plugin](https://github.com/hashicorp/vagrant/tree/master/plugins/guests/nixos).
 * [Vagrant NixOS Guest Plugin Template](https://github.com/hashicorp/vagrant/tree/master/templates/guests/nixos).
+* [Remote deployments with NixOS and Nixops at Yakkertech (NixCon 2020)](https://www.youtube.com/watch?v=jKMWW86_j8o).

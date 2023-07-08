@@ -9,6 +9,8 @@ set -euxo pipefail
 # see https://nixos.wiki/wiki/VSCodium
 cat >/etc/nixos/gnome-desktop.nix <<'EOF'
 { config, pkgs, ... }: {
+  users.users.gdm.extraGroups = ["video"];
+  users.users.vagrant.extraGroups = ["video"];
   services.spice-vdagentd.enable = true;
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;

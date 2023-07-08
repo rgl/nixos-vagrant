@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# detect the hypervisor.
+dmi_sys_vendor="$(cat /sys/devices/virtual/dmi/id/sys_vendor)"
+case "$dmi_sys_vendor" in
+  'QEMU')
+    hypervisor='qemu'
+    ;;
+  'Microsoft Corporation')
+    hypervisor='hyperv'
+    ;;
+  *)
+    hypervisor=''
+    ;;
+esac
+
 # create the gnome-desktop.nix file.
 # see https://nixos.wiki/wiki/GNOME
 # see https://nixos.wiki/wiki/Keyboard_Layout_Customization
@@ -9,9 +23,6 @@ set -euxo pipefail
 # see https://nixos.wiki/wiki/VSCodium
 cat >/etc/nixos/gnome-desktop.nix <<'EOF'
 { config, pkgs, ... }: {
-  users.users.gdm.extraGroups = ["video"];
-  users.users.vagrant.extraGroups = ["video"];
-  services.spice-vdagentd.enable = true;
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
@@ -53,6 +64,27 @@ cat >/etc/nixos/gnome-desktop.nix <<'EOF'
   ]);
 }
 EOF
+
+# create the gnome-desktop-$hypervisor.nix file.
+if [ "$hypervisor" == 'qemu' ]; then
+  cat >/etc/nixos/gnome-desktop-$hypervisor.nix <<'EOF'
+{ config, pkgs, ... }: {
+  services.spice-vdagentd.enable = true;
+}
+EOF
+elif [ "$hypervisor" == 'hyperv' ]; then
+  cat >/etc/nixos/gnome-desktop-$hypervisor.nix <<'EOF'
+{ config, pkgs, ... }: {
+  users.users.gdm.extraGroups = ["video"];
+  users.users.vagrant.extraGroups = ["video"];
+}
+EOF
+fi
+
+# include the gnome-desktop-$hypervisor.nix file in the system configuration.
+if [ -n "$hypervisor" ] && ! grep -qE "gnome-desktop-$hypervisor\.nix" /etc/nixos/configuration.nix; then
+  sed -i -E "s,^((.+)./hardware-configuration.nix),\1\n\2./gnome-desktop-$hypervisor.nix,g" /etc/nixos/configuration.nix
+fi
 
 # include the gnome-desktop.nix file in the system configuration.
 if ! grep -qE 'gnome-desktop\.nix' /etc/nixos/configuration.nix; then

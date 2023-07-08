@@ -29,6 +29,6 @@ nixos-${VERSION}-amd64-hyperv.box: install.sh nixos.pkr.hcl Vagrantfile.template
 
 tmp/qemu/configuration.nix: configuration.nix
 	install -d $(shell dirname $@)
-	sed -E 's,^((.+)./hardware-configuration.nix),\1\n\2./qemu-hardware-configuration.nix,g' configuration.nix >$@
+	sed -E 's,^((.+)./hardware-configuration.nix),\1\n\2./hardware-configuration-qemu.nix,g' configuration.nix >$@
 
 .PHONY: help build-libvirt build-hyperv

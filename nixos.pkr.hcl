@@ -60,7 +60,7 @@ source "qemu" "nixos-amd64" {
   cd_files = [
     "install.sh",
     "tmp/qemu/configuration.nix",
-    "qemu-hardware-configuration.nix",
+    "hardware-configuration-qemu.nix",
   ]
   machine_type   = "q35"
   efi_boot       = true
